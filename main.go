@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	c "github.com/douglasdoro/cachelru/cachelru"
+	c "github.com/douglasdoro/lrucache/cache"
 )
 
 func main() {
-	cacheLRU := c.NewCacheLRU(10)
+	cacheLRU := c.New(10)
 	cacheLRU.Set("item1", "value1")
 	cacheLRU.Set("item1", "value1")
 	cacheLRU.Set("item3", "value3")

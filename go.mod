@@ -1,4 +1,4 @@
-module github.com/douglasdoro/cachelru
+module github.com/douglasdoro/lrucache
 
 go 1.20
 
