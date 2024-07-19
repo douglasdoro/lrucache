@@ -13,5 +13,8 @@ func main() {
 	cacheLRU.Set("item3", "value3")
 	cacheLRU.Set("item4", "value4")
 
-	fmt.Println("Cache LRU: ", cacheLRU)
+	fmt.Println("Cache LRU 1: ", cacheLRU.Get("item1"))
+	fmt.Println("Cache LRU 2: ", cacheLRU.Get("item2"))
+	fmt.Println("Cache LRU 3: ", cacheLRU.Get("item3"))
+	fmt.Println("Cache LRU 4: ", cacheLRU.Get("item4"))
 }

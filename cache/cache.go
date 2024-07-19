@@ -2,55 +2,113 @@ package cache
 
 type CacheItem struct {
 	Key   string
-	Value string
+	Value any
+	prev  *CacheItem
+	next  *CacheItem
 }
 
 type Cache struct {
-	Capacity int
-	items    []CacheItem
+	Capacity      int
+	items         map[string]*CacheItem
+	itemsPosition *CacheItem
+	head          *CacheItem
 }
 
 func New(capacity int) *Cache {
-	return &Cache{Capacity: capacity, items: []CacheItem{}}
+	return &Cache{
+		Capacity: capacity,
+		items:    map[string]*CacheItem{}}
 }
 
-func (c *Cache) Get(key string) interface{} {
-	for i, v := range c.items {
-		if v.Key == key {
-			c.addToBeginningCacheItems(v, i)
-
-			return v
-		}
+func (c *Cache) Get(key string) any {
+	item, ok := c.items[key]
+	if !ok {
+		return -1
 	}
 
-	return -1
+	if item == c.head {
+		return item.Value
+	}
+
+	if item.prev != nil {
+		item.prev.next = item.next
+	}
+
+	if item.next != nil {
+		item.next.prev = item.prev
+	}
+
+	if item == c.itemsPosition {
+		c.itemsPosition = item.next
+	}
+
+	c.head.next = item
+	item.prev = c.head
+	c.head = item
+	c.head.next = nil
+
+	return item.Value
+}
+
+func (c *Cache) Set(key string, value any) {
+	// if key already exist, remove from linked list
+	if item, ok := c.items[key]; ok {
+		if item.prev != nil {
+			item.prev.next = item.next
+		}
+
+		if item.next != nil {
+			item.next.prev = item.prev
+		}
+
+		if item == c.itemsPosition {
+			c.itemsPosition = c.itemsPosition.next
+		}
+
+		if item == c.head {
+			c.head = item.prev
+		}
+
+		delete(c.items, item.Key)
+	}
+
+	if len(c.items) == c.Capacity {
+		leastItem := c.itemsPosition
+
+		delete(c.items, leastItem.Key)
+
+		c.itemsPosition.Key = key
+		c.itemsPosition.Value = value
+		c.items[key] = c.itemsPosition
+
+		return
+	}
+
+	newItem := CacheItem{Key: key, Value: value}
+
+	c.items[key] = &newItem
+	newItem.next = c.itemsPosition
+
+	if c.itemsPosition != nil {
+		c.itemsPosition.prev = &newItem
+	}
+
+	c.itemsPosition = &newItem
+
+	if c.itemsPosition.next == nil {
+		c.head = c.itemsPosition
+	}
 }
 
 func (c *Cache) Items() []CacheItem {
-	items := make([]CacheItem, len(c.items))
-	copy(items, c.items)
+	items := []CacheItem{}
+
+	current := c.head
+
+	for current != nil {
+		items = append(items, *current)
+		current = current.prev
+	}
 
 	return items
-}
-
-func (c *Cache) Set(key, value string) {
-	if len(c.items) < c.Capacity {
-		c.addToBeginningCacheItems(CacheItem{Key: key, Value: value}, 0)
-	} else {
-		c.addToBeginningCacheItems(CacheItem{Key: key, Value: value}, -1)
-	}
-}
-
-func (c *Cache) addToBeginningCacheItems(cacheItem CacheItem, currentPosition int) {
-	slc := []CacheItem{}
-	slc = append(slc, cacheItem)
-
-	if currentPosition == 0 {
-		c.items = append(slc, c.items...)
-	} else if currentPosition == -1 {
-		c.items = append(slc, c.items[1:len(c.items)-1]...)
-	} else {
-		c.items = append(slc, append(c.items[:currentPosition], c.items[currentPosition+1:]...)...)
-	}
-
 }
