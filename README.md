@@ -1,18 +1,19 @@
 # Cache LRU
 
-## Problema
+![](https://raw.githubusercontent.com/devgymbr/files/main/devgymblack.png). 
 
-Nesse desafio você precisa desenvolver uma estrutura de dados que se comporte como um Cache LRU que é um tipo de dado que guarda até X itens, sendo que quando já há X itens, o item com acesso mais antigo será removido.
+Esse é um desafio Devgym, encontre a descrição [aqui](https://app.devgym.com.br/challenges/a23f8c35-c29e-4be2-a15b-cfc0a4dc7d67). 
 
-### Requisitos
+Existem três versões da implementação encontradas na pasta `1`, `2` e `3`. Durante o estudo você entende as motivações para gerar a próxima. 
 
-* Escreva uma estrutura/classe que representa o Cache LRU .
-* O tipo definido possui três métodos/funções:
-    * Função construtura; recebe a capacidade do cache, um número inteiro.
-    * Método Get; recebe uma chave string e retorna um valor de qualquer tipo.
-    * Método Set; recebe a chave e o valor.
-* O método Get retorna -1 se não existir item para chave recebida.
-* O método Get memoriza a ordem de acesso de cada chave.
-* O método Set:
-    * Salva um valor baseado numa chave se o número de items salvos for abaixo da capacidade.
-    * Substitui o item com acesso mais antigo se a capacidade de itens foi atingida
+## Necessário 
+
+* Go 1.21+
+
+## Como rodar 
+
+A forma mais fácil de rodar o projeto é através de seus testes de unidade. Por exemplo para rodar a primeira versão da implementação
+
+```sh
+go test -v ./1
+```
